@@ -24,11 +24,26 @@ echo "<tr><td>".$data['position_name']."</td><td>".round($data['value'],1)."</td
 $db->close();
 ?>
 </table>
-<form action="keskiarvo.php" method="post">
+<form action="keskiarvo.php" method="get">
 <label for="h"> Min, max ja keskiarvot annetulla ajalla: h:</label>
 <input type="number" id="h" name="h">
 <input type="submit" value="submit">
 </form>
+<div>
+<h3>
+Varaajan keskiosan arvoja 30 min ajalta, jos ovat alle 47 C.
+</h3>
+<?php
+$db = new SQLite3('/home/talo/data/talo.db');
+$results = $db->query("SELECT time,value from talo_data WHERE time >= datetime((SELECT max(time) from talo_data),'-30 minutes') and position_id = 4 and value < 47");
+if($results==FALSE)
+            {
+                echo "Error in fetch ".$db->lastErrorMsg();
+            }
+while ($row = $results->fetchArray()) {
+echo "<p>".$row['time']." ".$row['value']."</p>";}
+?>
+</div>
 </body>
 </html>
 
